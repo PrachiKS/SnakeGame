@@ -32,7 +32,7 @@ function isCollide(snake) {
     }
 
     //collide on wall
-    if (snake[0].x >= 18 || snake[0].x <= 0 && snake[0].y >= 18 || snake[0].y <= 18) {
+    if (snake[0].x >= 18 || snake[0].x <= 0 || snake[0].y >= 18 || snake[0].y <= 0) {
         return true;
     }
 }
@@ -40,11 +40,12 @@ function isCollide(snake) {
 function gameEngine() {
 
     //Part 1: updating the snake array & food
+
     if (isCollide(snakeArr)) {
         gameOverSound.play();
         musicSound.pause();
         inputDir = { x: 0, y: 0 };
-        //alert("Game Over. Press any key to play again!")
+        alert("Game Over. Press any key to play again!")
         snakeArr = [{ x: 13, y: 15 }]
         musicSound.play();
         score = 0;
@@ -53,6 +54,13 @@ function gameEngine() {
     // If you have eaten the food, increment the score and regenerate the food
     if (snakeArr[0].y === food.y && snakeArr[0].x === food.x) {
         foodSound.play();
+        score += 1;
+        if (score > scoreValue) {
+            scoreValue = score;
+            localStorage.setItem("highScore", JSON.stringify(scoreValue));
+            highscoreBoard.innerHTML = "highScore: " + scoreValue;
+        }
+        scoreBoard.innerHTML = "Score: " + score;
         snakeArr.unshift({ x: snakeArr[0].x + inputDir.x, y: snakeArr[0].y + inputDir.y });
         let a = 2;
         let b = 16;
@@ -95,6 +103,16 @@ function gameEngine() {
 
 
 // main logic start here 
+musicSound.play();
+let highscore = localStorage.getItem('highscore');
+if (highscore === null) {
+    scoreValue = 0;
+    localStorage.setItem("highScore", JSON.stringify(scoreValue))
+}
+else {
+    scoreValue = JSON.parse(highscore);
+    highscoreBoard.innerHTML = "highScore: " + highscore;
+}
 window.requestAnimationFrame(main);
 window.addEventListener('keydown', e => {
     inputDir = { x: 0, y: 1 } // start the game
